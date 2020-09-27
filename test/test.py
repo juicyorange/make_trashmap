@@ -61,7 +61,7 @@ for i in sheet.rows:
     get_addr = i[3].value #상세주소
     #상세주소 나중에 검색 더 잘되게 문법적으로 다듬기.. ex) 앞 이런거 뺴고 ( ) 이거 사이에 있는 글자 다 빼고!
 
-    result = isinstance(get_addr,str) #받아온 주소가 str인지 확인.
+    result = isinstance(get_addr,str) #받아온 주소가 str인지 확인. get_addr이 도로명의 숫자부분만 적혀있는 경우가 있음.
     if result:
         addr = get_addr
     else:
