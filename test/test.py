@@ -31,7 +31,7 @@ def getGPS_coordinate_for_KAKAO(address, MYAPP_KEY):
 
 
 # 현재 스크립트와 같은 폴더에 위치한 엑셀 파일을 읽어옵니다.
-wb = openpyxl.load_workbook('test/rt.xlsx')
+wb = openpyxl.load_workbook('rt.xlsx')
 
 # 엑셀 파일 내 모든 시트 이름을 출력합니다.
 #print(wb.sheetnames)
