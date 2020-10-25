@@ -39,8 +39,7 @@ app.use(function(req, res, next){
           idx++;
         }
       }
-      req.trash_data = temp_trash_data
-      mysql.end();
+      req.trash_data = temp_trash_data;
       next();
     });
 });
