@@ -48,7 +48,6 @@ app.get('/', function(req, res){
   data = req.trash_data
   var map_html = template.map_making(data);
   res.send(map_html);
-
 });
 
 //서버가 비로소 여기에서 열린다. listen이 성공적으로 되면 function안에 있는 기능 수행.
