@@ -5,12 +5,16 @@ var qs = require('querystring');
 var path = require('path');
 var mysql = require('./lib/db');
 var template = require('./lib/map_making_template');
+var bodyParser = require('body-parser');
 var express = require('express') // express 모듈. npm install express를 통해 설치가능.
 
 '<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=ec37ce7ff126878e77d2c814181f7794&libraries=services,clusterer,drawing"></script>';
 
 
 var app = express(); //express의 리턴값을 app에 담는다.
+
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 
 //public 디렉토리에 있는 파일들을 모두 받아온다.
 //정적인 파일을 서비스할 수 있게 해준다.
@@ -19,7 +23,7 @@ app.use(express.static('public'));
 //use를 사용해 매 접속마다 db에서 값을 갱신하도록 한다.
 app.use(function(req, res, next){
     //query문
-  var sql = 'SELECT * FROM trash_addrs';
+  var sql = 'SELECT * FROM trash_addrs WHERE validity=1 or validity=3';
     //db에서 가져온 것을 담기위한 배열
   var temp_trash_data = new Array();
 
@@ -48,6 +52,41 @@ app.get('/', function(req, res){
   data = req.trash_data
   var map_html = template.map_making(data);
   res.send(map_html);
+});
+
+app.post('/add', function(req,res){
+
+    trash_addr = req.body.addr;
+    gu_name = req.body.gu_name;
+    trash_lat = req.body.lat;
+    trash_lng = req.body.lng;
+
+    //validity : (0: 표시x, 1: 표시o, 2: 추가요청, 3: 수정요청)
+    var sql = "INSERT INTO trash_addrs (gu_name, trash_addr, trash_lng, trash_lat, validity) VALUES(?,?,?,?,?)";
+    mysql.query(sql, [gu_name, trash_addr, trash_lng, trash_lat, 2], function(err, result, field){
+      if(err){
+        console.log(err);
+        res.status(500).send("Internal Server Error");
+      }
+      res.redirect('/');
+    })
+});
+
+app.post('/delete', function(req,res){
+
+  trash_addr = req.body.addr;
+  gu_name = req.body.gu_name;
+  trash_lat = req.body.lat;
+  trash_lng = req.body.lng;
+  id = req.body.id;
+
+  var sql = "UPDATE trash_addrs SET validity=? WHERE id = ?";
+
+  mysql.query(sql, [3, id], function(err, result) {
+    console.log("Record Updated!!");
+    console.log(result);
+  });
+res.redirect('/');
 });
 
 //서버가 비로소 여기에서 열린다. listen이 성공적으로 되면 function안에 있는 기능 수행.

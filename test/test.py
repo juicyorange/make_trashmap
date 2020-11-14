@@ -31,7 +31,7 @@ def getGPS_coordinate_for_KAKAO(address, MYAPP_KEY):
 
 
 # 현재 스크립트와 같은 폴더에 위치한 엑셀 파일을 읽어옵니다.
-wb = openpyxl.load_workbook('rt.xlsx')
+wb = openpyxl.load_workbook('test/test.xlsx')
 
 # 엑셀 파일 내 모든 시트 이름을 출력합니다.
 #print(wb.sheetnames)
@@ -51,8 +51,8 @@ conn = pymysql.connect(
     charset='utf8' 
     )
 curs = conn.cursor() #mysql db연결
-sql = """INSERT INTO trash_addrs(gu_name,trash_addr,trash_lng,trash_lat)
-         VALUES (%s, %s, %s, %s)""" #sql문 작성
+sql = """INSERT INTO trash_addrs(gu_name,trash_addr,trash_lng,trash_lat,validity)
+         VALUES (%s, %s, %s, %s, %s)""" #sql문 작성
 
 idx = 0
 for i in sheet.rows:
@@ -82,13 +82,13 @@ for i in sheet.rows:
                 lat = a['documents'][0]['address']['y'] #y좌표
                 print(get_gu)
                 idx = idx+1
-                curs.execute(sql, (get_gu, addr, lng, lat))
+                curs.execute(sql, (get_gu, addr, lng, lat, 1))
             elif a['documents'][0]['road_address'] != None:
                 lng = a['documents'][0]['road_address']['x'] #x좌표
                 lat = a['documents'][0]['road_address']['y'] #y좌표
                 print(get_gu)
                 idx = idx+1
-                curs.execute(sql, (get_gu, addr, lng, lat))
+                curs.execute(sql, (get_gu, addr, lng, lat, 1))
 
 print (idx) #1100개중 242개만 검색이된다. 특정구가 데이터를 잘 정리하지 않아서 그런것 같다.
 conn.commit()
