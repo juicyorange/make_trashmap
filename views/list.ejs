@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <title>Bootstrap Example</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    </head>
+
+    <body>
+        <div class="container">
+            <a style="border: 1px solid gold; float: left; width: 20%;" href="/admin/list?category=0&cur=1">
+            표시X
+            </a>
+            <a style="border: 1px solid red; float: left; width: 20%;" href="/admin/list?category=1&cur=1">
+            표시O
+            </a>
+            <a style="border: 1px solid blue; float: left; width: 20%;" href="/admin/list?category=2&cur=1">
+            추가요청
+            </a>
+            <a style="border: 1px solid green; float: left; width: 20%;" href="/admin/list?category=3&cur=1">
+            삭제요청
+            </a>
+
+            <table class="table talbe-striped">
+                <thead>
+                    <th>id</th>
+                    <th>행정구역</th>
+                    <th>상세주소</th>
+                    <th>지도에서보기</th>
+                    <th>수정</th>  
+                    <th>삭제</th>
+                </thead>
+                <tbody>
+                    <% data.forEach(function (trashcan, index){ %>
+                    <tr>
+                        <td>
+                            <%= trashcan.id %>
+                        </td>
+                        <td>
+                            <%= trashcan.gu_name %>
+                        </td>
+                        <td>
+                            <%= trashcan.trash_addr %>
+                        </td>
+                        <td>
+                            <a href="https://map.kakao.com/link/map/Hello World!,<%= trashcan.trash_lat %>, <%= trashcan.trash_lng %>" style="color:blue" target="_blank">지도에서보기</a>
+                        </td>
+                        <td>
+                            <% if (paging.category==0){
+                                %>
+                                <form action="/visible" method="post">
+                                    <input type="hidden" name="id" value='<%= trashcan.id %>'>
+                                    <input type="hidden" name="category" value='<%= paging.category %>'>
+                                    <input type="hidden" name="curPage" value='<%= paging.curPage %>'>
+                                    <input type="submit" value="보이게">
+                                </form>
+                                <%
+                                }
+                                else if(paging.category==1){
+                                %>
+                                <form action="/invisible" method="post">
+                                    <input type="hidden" name="id" value='<%= trashcan.id %>'>
+                                    <input type="hidden" name="category" value='<%= paging.category %>'>
+                                    <input type="hidden" name="curPage" value='<%= paging.curPage %>'>
+                                    <input type="submit" value="안보이게">
+                                </form>
+                                <%
+                                }
+                                else{
+                                %>
+                                    <form action="/visible" method="post">
+                                        <input type="hidden" name="id" value='<%= trashcan.id %>'>
+                                        <input type="hidden" name="category" value='<%= paging.category %>'>
+                                        <input type="hidden" name="curPage" value='<%= paging.curPage %>'>
+                                        <input type="submit" value="보이게">
+                                    </form>
+                                    <form action="/invisible" method="post">
+                                        <input type="hidden" name="id" value='<%= trashcan.id %>'>
+                                        <input type="hidden" name="category" value='<%= paging.category %>'>
+                                        <input type="hidden" name="curPage" value='<%= paging.curPage %>'>
+                                        <input type="submit" value="안보이게">
+                                    </form>
+                                <%
+                                }
+                                %>
+                        </td>
+                        <td>
+                            <form action="/delete" method="post">
+                                <input type="hidden" name="id" value='<%= trashcan.id %>'>
+                                <input type="hidden" name="category" value='<%= paging.category %>'>
+                                <input type="hidden" name="curPage" value='<%= paging.curPage %>'>
+                                <input type="submit" value="삭제">
+                            </form>
+                        </td>
+                    </tr>
+                    <% }) %>
+                </tbody>
+            </table>
+       </div>
+
+       <br>
+       <br>
+
+       <div class="container">
+           <ui class="pager">
+        <%
+        var category = paging.category
+        var curSet = paging.curSet
+        var endPage = paging.endPage
+        var startPage = paging.startPage
+        var totalSet = paging.totalSet
+        var totalPage = paging.totalPage
+        var page_list_size = paging.page_list_size
+        var page_size = paging.page_size
+        var curPage = paging.curPage
+        %>
+
+        <%
+            if(curSet >1){
+                %>
+                <li value=(startPage -1) class="previous">
+                    <a href='/admin/list?category=<%= category %>&cur=<%= (startPage - 1) %>'>이전페이지</a>
+                </li>
+
+                <%
+            }
+                %>
+
+
+                <%
+            for(var i = startPage; i <=endPage; i++){
+                if(i >totalPage){
+                    break;
+                }
+                if(i == curPage){
+                %>
+                    <li value=<% i %> class='' >
+                    <a href='/admin/list?category=<%= category %>&cur=<%= i %>'><%= i %></a>
+                    </li>
+
+                    <%
+                }
+                else{
+                    %>
+                    <li value=<%= i %> class='active' >
+                        <a href='/admin/list?category=<%= category %>&cur=<%= i %>'><%= i %></a>
+                    </li>
+
+                    <%
+                }
+                    %>
+
+                <%
+            }
+                %>
+
+                <%
+                if(curSet <totalSet){
+                %>
+                    <li value=( endPage + 1) class="next">
+                        <a href='/admin/list?category=<%= category %>&cur=<%= (endPage + 1) %>'>다음페이지</a>
+                    </li>
+             <%
+            }
+            %>
+           </ui>
+       </div>
+    </body>
+</html>
