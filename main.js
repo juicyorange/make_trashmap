@@ -8,6 +8,7 @@ var template = require('./lib/map_making_template');
 var bodyParser = require('body-parser');
 var ejs = require('ejs');
 var express = require('express') // express 모듈. npm install express를 통해 설치가능.
+var session = require('express-session')
 
 '<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=ec37ce7ff126878e77d2c814181f7794&libraries=services,clusterer,drawing"></script>';
 
@@ -18,6 +19,9 @@ app.set("view engine", "ejs");
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+
+//세션설정
+app.use(session({ secret: 'keyboard cat', cookie: { maxAge: 60000*10 }}))
 
 //public 디렉토리에 있는 파일들을 모두 받아온다.
 //정적인 파일을 서비스할 수 있게 해준다.
@@ -66,7 +70,7 @@ app.post('/add', function(req,res){
     trash_lng = req.body.lng;
 
     //validity : (0: 표시x, 1: 표시o, 2: 추가요청, 3: 삭제요청)
-    var sql = "INSERT INTO trash_addrs (gu_name, trash_addr, trash_lng, trash_lat, validity) VALUES(?,?,?,?,?)";
+    var sql = "INSERT INTO trash_addrs (gu_name, trash_addr, trash_lng, trash_lat, validity, adit_time) VALUES(?,?,?,?,?,NOW())";
     mysql.query(sql, [gu_name, trash_addr, trash_lng, trash_lat, 2], function(err, result, field){
       if(err){
         console.log(err);
@@ -84,7 +88,7 @@ app.post('/invisible_wait', function(req,res){
   trash_lng = req.body.lng;
   id = req.body.id;
 
-  var sql = "UPDATE trash_addrs SET validity=? WHERE id = ?";
+  var sql = "UPDATE trash_addrs SET validity=?, adit_time=NOW() WHERE id = ?";
 
   mysql.query(sql, [3, id], function(err, result) {
     console.log("Record Updated!!");
@@ -93,10 +97,36 @@ app.post('/invisible_wait', function(req,res){
 res.redirect('/');
 });
 
-app.post('/visible', function(req,res){
+
+app.post('/admin', function(req,res){
+  admin_code = "iaubewgivgreinvlkjrbwljvhb";
+  code = req.body.code;
+  if(code == admin_code){
+    req.session.code = code
+    req.session.save(function(err){});
+    res.redirect("/admin/list?category=0&cur=1");
+  }
+  else{
+    res.send("Wrong code");
+  }
+});
+
+var auth = function (req, res, next) {
+// Session Check
+// 어드민 여부 체크 필요
+if (req.session.code != null){
+    //비어있지 않다면 session이 저장되어 있는 것이다.
+    next();
+}
+//세션이 비어있는 경우 Error라고 출력한다.
+else
+  res.send("The wrong approach.");
+};
+
+app.post('/visible', auth, function(req,res){
   id = req.body.id;
 
-  var sql = "UPDATE trash_addrs SET validity=? WHERE id = ?";
+  var sql = "UPDATE trash_addrs SET validity=?, adit_time=NOW() WHERE id = ?";
 
   mysql.query(sql, [1, id], function(err, result) {
     console.log("Record Updated!!");
@@ -105,10 +135,10 @@ app.post('/visible', function(req,res){
   res.redirect('/admin/list?category='+req.body.category+'&cur='+req.body.curPage);
 });
 
-app.post('/invisible', function(req,res){
+app.post('/invisible',auth, function(req,res){
   id = req.body.id;
 
-  var sql = "UPDATE trash_addrs SET validity=? WHERE id = ?";
+  var sql = "UPDATE trash_addrs SET validity=?, adit_time=NOW() WHERE id = ?";
 
   mysql.query(sql, [0, id], function(err, result) {
     console.log("Record Updated!!");
@@ -117,7 +147,7 @@ app.post('/invisible', function(req,res){
   res.redirect('/admin/list?category='+req.body.category+'&cur='+req.body.curPage);
 });
 
-app.post('/delete', function(req,res){
+app.post('/delete',auth, function(req,res){
   id = req.body.id;
 
   var sql = "DELETE FROM trash_addrs WHERE id = ?";
@@ -127,14 +157,11 @@ app.post('/delete', function(req,res){
   });
 
 res.redirect('/admin/list?category='+req.body.category+'&cur='+req.body.curPage);
-
 });
 
-app.get('/admin/gjfnlenvkajwgnkawjnvlawk', function(req,res){
-    
-});
 
-app.get("/admin/list/", function(req,res){
+
+app.get("/admin/list/",auth, function(req,res){
   ///admin/list?category=int&cur=int
   //한 페이지에 게시물 수
   var page_size = 10;
@@ -199,6 +226,16 @@ app.get("/admin/list/", function(req,res){
       res.render('list',{data:result, paging:result2});
     })
   })
+})
+
+app.post('/admin_out', auth, function(req,res){
+  if(req.session.code != null)
+	{
+		req.session.destroy();
+		res.redirect('/');
+	}
+	else
+		res.send("Session is not present");
 })
 
 

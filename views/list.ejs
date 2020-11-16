@@ -11,18 +11,42 @@
 
     <body>
         <div class="container">
-            <a style="border: 1px solid gold; float: left; width: 20%;" href="/admin/list?category=0&cur=1">
+            <a style="border: 1px solid gold; float: left; width: 22%;" href="/admin/list?category=0&cur=1">
             표시X
             </a>
-            <a style="border: 1px solid red; float: left; width: 20%;" href="/admin/list?category=1&cur=1">
+            <a style="border: 1px solid red; float: left; width: 22%;" href="/admin/list?category=1&cur=1">
             표시O
             </a>
-            <a style="border: 1px solid blue; float: left; width: 20%;" href="/admin/list?category=2&cur=1">
+            <a style="border: 1px solid blue; float: left; width: 22%;" href="/admin/list?category=2&cur=1">
             추가요청
             </a>
-            <a style="border: 1px solid green; float: left; width: 20%;" href="/admin/list?category=3&cur=1">
+            <a style="border: 1px solid green; float: left; width: 22%;" href="/admin/list?category=3&cur=1">
             삭제요청
             </a>
+
+            <div>
+                <form action="/admin_out" method="post">
+                <input type="submit" value="로그아웃">
+                </form>
+            </div>
+            <div>
+                <% if (paging.category==0){
+                    %><a>표시X 목록</a>
+                    <%
+                    }
+                    else if(paging.category==1){
+                    %><a>표시O 목록</a>
+                    <%
+                    }
+                    else if(paging.category==2){
+                    %><a>추가요청 목록</a>
+                    <%
+                    } else if(paging.category==3){
+                    %><a>삭제요청 목록</a>
+                    <%
+                    }
+                    %> 
+            </div>
 
             <table class="table talbe-striped">
                 <thead>

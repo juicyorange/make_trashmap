@@ -51,8 +51,8 @@ conn = pymysql.connect(
     charset='utf8' 
     )
 curs = conn.cursor() #mysql db연결
-sql = """INSERT INTO trash_addrs(gu_name,trash_addr,trash_lng,trash_lat,validity)
-         VALUES (%s, %s, %s, %s, %s)""" #sql문 작성
+sql = """INSERT INTO trash_addrs(gu_name,trash_addr,trash_lng,trash_lat,validity, adit_time)
+         VALUES (%s, %s, %s, %s, %s, NOW())""" #sql문 작성
 
 idx = 0
 for i in sheet.rows:
