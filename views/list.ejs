@@ -4,9 +4,9 @@
         <title>Bootstrap Example</title>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
     </head>
 
     <body>
@@ -53,6 +53,11 @@
                     <th>id</th>
                     <th>행정구역</th>
                     <th>상세주소</th>
+                    <% if (paging.category==3){
+                    %><th>삭제요청이유</th>
+                    <%
+                    }
+                    %>
                     <th>지도에서보기</th>
                     <th>수정</th>  
                     <th>삭제</th>
@@ -69,6 +74,13 @@
                         <td>
                             <%= trashcan.trash_addr %>
                         </td>
+                            <% if (paging.category==3){
+                            %><td>
+                                <%= trashcan.reason %>
+                            </td>
+                            <% 
+                           }   
+                            %>
                         <td>
                             <a href="https://map.kakao.com/link/map/Hello World!,<%= trashcan.trash_lat %>, <%= trashcan.trash_lng %>" style="color:blue" target="_blank">지도에서보기</a>
                         </td>

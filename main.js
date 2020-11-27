@@ -1,16 +1,12 @@
-var http = require('http');
-var fs = require('fs');
-var url = require('url');
-var qs = require('querystring');
 var path = require('path');
+var bodyParser = require('body-parser'); //req.body를 통해 요청을 받는다.
+var ejs = require('ejs'); //ejs 템플릿 사용
+var express = require('express') // express 모듈. npm install express를 통해 설치가능.
+var session = require('express-session'); // session를 위한 모듈
+
 var mysql = require('./lib/db');
 var template = require('./lib/map_making_template');
-var bodyParser = require('body-parser');
-var ejs = require('ejs');
-var express = require('express') // express 모듈. npm install express를 통해 설치가능.
-var session = require('express-session')
 
-'<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=ec37ce7ff126878e77d2c814181f7794&libraries=services,clusterer,drawing"></script>';
 
 var app = express(); //express의 리턴값을 app에 담는다.
 
@@ -27,33 +23,33 @@ app.use(session({ secret: 'keyboard cat', cookie: { maxAge: 60000*10 }}))
 //정적인 파일을 서비스할 수 있게 해준다.
 app.use(express.static('public'));
 
-//use를 사용해 매 접속마다 db에서 값을 갱신하도록 한다.
+//use를 사용해 매 접속마다 db에서 값을 가져오도록 한다.
 app.use(function(req, res, next){
-    //query문
-    //validity : (0: 표시x, 1: 표시o, 2: 추가요청, 3: 삭제요청)
+  //query문
+  //validity : (0: 표시x, 1: 표시o, 2: 추가요청, 3: 삭제요청)
   var sql = 'SELECT * FROM trash_addrs WHERE validity=1 or validity=3';
-    //db에서 가져온 것을 담기위한 배열
+  //db에서 가져온 것을 담기위한 배열
   var temp_trash_data = new Array();
 
   mysql.query(sql, function(err, results, fields){
-      if(err){
-        console.log(err);
-        }
-        else {
-        //console.log(results) 어떤형식으로 넘어오는지 궁금하면 해보기!
-        idx = 0;
-        //주요 데이터들은 results에 저장되어 넘어온다. 함수의 두번째파라미터
-        while(idx<results.length){
-          //이렇게 넣어주지 않으면 result는 함수안의 데이터이기 때문에
-          //함수가 종료되면 사라진다. 그래서 전역변수인 trash_data를 선언하고
-          //그곳에 results의 값들을 하나하나 할당한다.
-          temp_trash_data.push(results[idx]);
-          idx++;
-        }
+    if(err){
+      console.log(err);
+    }
+    else {
+    //console.log(results) 어떤형식으로 넘어오는지 궁금하면 해보기!
+    idx = 0;
+    //주요 데이터들은 results에 저장되어 넘어온다. 함수의 두번째파라미터
+    while(idx<results.length){
+      //이렇게 넣어주지 않으면 result는 함수안의 데이터이기 때문에
+      //함수가 종료되면 사라진다. 그래서 전역변수인 trash_data를 선언하고
+      //그곳에 results의 값들을 하나하나 할당한다.
+      temp_trash_data.push(results[idx]);
+      idx++;
       }
-      req.trash_data = temp_trash_data;
-      next();
-    });
+    }
+    req.trash_data = temp_trash_data;
+    next();
+  });
 });
 
 app.get('/', function(req, res){
@@ -82,15 +78,12 @@ app.post('/add', function(req,res){
 
 app.post('/invisible_wait', function(req,res){
 
-  trash_addr = req.body.addr;
-  gu_name = req.body.gu_name;
-  trash_lat = req.body.lat;
-  trash_lng = req.body.lng;
+  reason = req.body.reason;
   id = req.body.id;
 
-  var sql = "UPDATE trash_addrs SET validity=?, adit_time=NOW() WHERE id = ?";
+  var sql = "UPDATE trash_addrs SET validity=?, reason=?, adit_time=NOW() WHERE id = ?";
 
-  mysql.query(sql, [3, id], function(err, result) {
+  mysql.query(sql, [3, reason, id], function(err, result) {
     console.log("Record Updated!!");
     console.log(result);
   });
@@ -221,7 +214,6 @@ app.get("/admin/list/",auth, function(req,res){
         console.log(err);
         res.status(500).send("Internal Server Error");
       }
-      console.log("몇번부터 몇번까지냐~~~~~~~" + no);
 
       res.render('list',{data:result, paging:result2});
     })
