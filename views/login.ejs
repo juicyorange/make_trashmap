@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>CodeIn</title>
+
+    <!--부트스트랩-->
+    <!-- 합쳐지고 최소화된 최신 CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+    <!-- 부가적인 테마 -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css">
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+  </head>
+
+  <body>
+
+    <div class="container">
+
+      <form class="form-signin" method="post" action="/admin_check">
+        <h2 class="form-signin-heading">Please code in</h2>
+        <label for="inputEmail" class="sr-only">Code num</label>
+        <input type="code" name="code" class="form-control" placeholder="Code Num" required autofocus>
+        <!--코드 입력 1회 틀릴 시 빨간글씨로 일치하지 않는 코드라고 보여준다.-->
+        <% if(fail==1){
+          %> <p style="margin-top: 5px; color:red">일치하지 않는 코드입니다.</p>
+          <%
+        }
+          %>
+        <button class="btn btn-lg btn-primary btn-block" type="submit" style="margin-top:10px">인증</button>
+        <a style="margin-top: 10px" href="/">홈으로</a>
+      </form>
+    </div> 
+    <!--footer-->
+    <footer class="footer" style="padding-left:15%; padding-right: 5%; ">
+      <div class="container" style="float: left; width:33%">
+          <p class="text-muted">2020-2 web/python termproject</p>
+      </div>
+      <div class="container" style="float: right; width:33%">
+          <p class="text-muted">Seoul_Trash_Map v1.0</p>
+      </div>
+  </footer>
+  </body>
+</html>

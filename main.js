@@ -31,19 +31,31 @@ app.use(express.static('public'));
 
 app.use('/', indexRouter);
 app.use('/admin', adminRouter);
+
 app.post('/admin_check', function(req, res){
+
   admin_code = "iaubewgivgreinvlkjrbwljvhb"; //그냥 따로 가입없이 코드로 진행.
   code = req.body.code;
   if(code == admin_code){
     req.session.code = code
     req.session.save(function(err){});
-    res.send(true);
+    res.redirect('/admin/');
   }
   else{
-    console.log("뭐야");
-    res.send(false);
+    res.render('login',{fail:1});
   }
 });
+
+//이것을 통해 인증이 되어있으면 Trash map 버튼을 눌렀을때 세션확인을 통해
+//세션이 유지되어있으면 로그인페이지가 아닌 관리자페이지로 이동시킨다.
+app.get('/login', function(req, res){
+  if(req.session.code != null){
+    res.redirect('/admin/')
+  }
+  //fail은 로그인 실패인지 아닌지를 판단하는 것이다. 처음에는 0으로 보낸다.
+  //1인경우 입력이 잘못됬다고 표시해준다.
+  res.render('login', {fail:0});
+})
 
 
 //서버가 비로소 여기에서 열린다. listen이 성공적으로 되면 function안에 있는 기능 수행.

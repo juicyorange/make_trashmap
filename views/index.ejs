@@ -2,42 +2,64 @@
     <html>
       <head>
           <meta charset="utf-8">
-          <title>Seoul Trash_map</title>
+          <title><%= title %></title>
+        
+        <!--부트스트랩-->
+        <!-- 합쳐지고 최소화된 최신 CSS -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+        <!-- 부가적인 테마 -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css">
+
+        <link rel='stylesheet' href='/stylesheets/style.css' />
+
+        <!--아래 스타일은 지도만을 위한 스타일들이다.-->
       <style>
           body, html{
+              padding-top: 0px;
               width:100%;
               height:100%;
+          }
+          textarea{
+            float:left ;
+            width:70% ;
+            margin-right:3px;
           }
           .map_wrap {position:relative;width:100%;height:100%;}
           .title {font-weight:bold;display:block;}
           .hAddr {position:absolute;left:10px;top:10px;border-radius: 2px;background:#fff;background:rgba(255,255,255,0.8);z-index:1;padding:5px;}
-          .app_title {position:absolute;left:47%;top:10px;border-radius: 2px;background:#fff;background:rgba(255,255,255,0.8);z-index:1;padding:5px;}
+          .app_title {position:absolute;left:44%;top:10px;border-radius: 2px;background:#fff;background:rgba(255, 255, 255, 0);z-index:1;padding:5px;}
 
           .input_code {position:absolute;right:10px;top:10px;border-radius: 2px;background:#fff;background:rgba(255,255,255,0.8);z-index:1;padding:5px;}
           #centerAddr {display:block;margin-top:2px;font-weight: normal;}
-          .bAddr {padding:5px;text-overflow: ellipsis;overflow: hidden;white-space: nowrap;}
+          .bAddr {padding:3px;text-overflow: ellipsis;overflow: hidden;white-space: nowrap;}
       </style>
+
       </head>
 
       <body>
         <div class="map_wrap">
             <div id="map" style="width:100%;height:100%;position:relative;overflow:hidden;"></div>
             <div class="hAddr">
-                <span class="title">지도중심기준 행정동 주소정보</span>
+                <span class="title">지도 중심 주소</span>
                 <span id="centerAddr"></span>
             </div>
-            <div class="app_title">Trash Map</div>
-            <div class="input_code">
-                <form id = "check_form" action="/admin_check" method="post">
-                <input type="text" name="code">
-                <input type ="button" onclick="check_button(); return false;" value="인증">
-                </form>
-            </div>
+            <div class="app_title"><a style="text-decoration:none; color:black; font-size:xx-large"  href="/login">Trash Map</a></div>
          </div>
 
-        <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=ec37ce7ff126878e77d2c814181f7794&libraries=services,clusterer,drawing"></script>
+         <!--footer-->
+         <footer class="footer" style="padding-left:15%; padding-right: 5%; ">
+            <div class="container" style="float: left; width:33%">
+                <p class="text-muted">2020-2 web/python termproject</p>
+            </div>
+            <div class="container" style="float: right; width:33%">
+                <p class="text-muted">Seoul_Trash_Map v1.0</p>
+            </div>
+        </footer>
+
+        <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=<%= appkey %>&libraries=services,clusterer,drawing"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 
+        <!-- 지도를 출력해주기 위한 javscript -->
         <script>
             var mapContainer = document.getElementById('map'), // 지도를 표시할 div
                 mapOption = {
@@ -88,12 +110,9 @@
                 });
             } 
             else { // HTML5의 GeoLocation을 사용할 수 없을때 마커 표시 위치와 인포윈도우 내용을 설정합니다
-                
                 var locPosition = new kakao.maps.LatLng(37.5642135, 127.0016985);
                 alert('현재위치 기능을 사용할수 없어요.. 서울의 중심으로 옮겨드릴게요!');
-                //왜 안옮겨지지??
                 map.setCenter(locPosition);
-
             }
 
             //현재 중심이 되는 위치 표시. 이때 지도를 이동하면 바로 변경된다. 지도 중심을 구하는데 필요. 
@@ -172,7 +191,7 @@
                 // 인포윈도우에 출력할 마커의 위치정보.
                 var where = marker_data[i]['trash_addr'];
 
-                var iwContent = '<div style="padding:5px">'+where+'</div>';
+                var iwContent = '<div class="bAddr">'+where+'</div>';
                 iwPosition = markerPosition //인포윈도우 표시 위치입니다
 
                 // 일반 인포윈도우를 생성합니다
@@ -185,22 +204,21 @@
                 markers.push(marker);
 
                 //인포윈도우를 지도에 출력하는 부분.
-                //마우스를 올리면 보이고, 마우스를 때면 사라진다. 
+                //클릭 또는 마우스를 올리면 보이고, 마우스를 때면 사라진다. 
                 kakao.maps.event.addListener(marker, 'mouseover', makeOverListener(map, marker, infowindow));
                 kakao.maps.event.addListener(marker, 'mouseout', makeOutListener(infowindow));
 
                 // 우클릭 했을때 띄울 인포윈도우
                 var iwContent = '<div class="bAddr">' +
-                '<span class="title">삭제요청</span>' + 
-                where + 
-                '</div>'+
-                '<div>'+
+                '<span class="title">정보</span>' + 
+                '<a href="https://map.kakao.com/link/map/길찾기는 역시 카카오맵!,'+marker_data[i]['trash_lat']+','+marker_data[i]['trash_lng']+'" style="color:blue" target="_blank">'+
+                where + '</a>'+
+                    '<span class="title">삭제요청</span>' + 
                     '<form id="del_form" method="post">'+
                         '<textarea name="reason" placeholder="삭제요청 사유를 자유롭게 적어주세요"></textarea>'+
                         '<input type="hidden" name="id" value='+marker_data[i]['id']+'>'+
-                        '<input type ="button" onclick="del_button(); return false;" value="삭제요청">'+
+                        '<input style="float: rigth"type ="button" onclick="del_button(); return false;" value="삭제요청">'+
                     '</form>'+
-                    '<a href="https://map.kakao.com/link/map/길찾기는 여기서!,'+marker_data[i]['trash_lat']+','+marker_data[i]['trash_lng']+'" style="color:blue" target="_blank">지도에서보기</a>'+
                 '</div>'
                 ;
                 iwRemoveable = true;
@@ -222,8 +240,6 @@
             // 클러스터러에 마커들을 추가합니다
             clusterer.addMarkers(markers);
 
-
-            
             // 지도에 클릭 이벤트를 등록합니다
             // 지도를 클릭하면 마지막 파라미터로 넘어온 함수를 호출합니다
             // dbclick도 있는데 잘 생각해보고 구현하자. 일단 여기에서 서버로 데이터를 보내고 처리하는 것 부터 하자.
@@ -232,7 +248,6 @@
                 
                 // 클릭한 위도, 경도 정보를 가져옵니다 
                 var latlng = mouseEvent.latLng; 
-
                 
                 //좌표로 주소 변환
                 searchDetailAddrFromCoords(latlng, function(result, status) {
@@ -240,16 +255,18 @@
                         var detailAddr = result[0].address.address_name ;
                         //인포윈도우 정보  
                         var iwContent = '<div class="bAddr">' +
-                        '<span class="title">법정동 주소정보</span>' + 
-                        detailAddr + 
-                        '</div>'+
+                        '<span class="title">정보</span>' + 
+                        '<a href="https://map.kakao.com/link/map/길찾기는 역시 카카오맵!,'+latlng.getLat()+','+latlng.getLng()+'" style="color:blue" target="_blank">'+
+                        detailAddr + '</a>'+
+                        '<span class="title">추가요청</span>' + 
                         '<form id="add_form" method="post">'+
                             '<textarea name="addr">'+detailAddr+'</textarea>'+
                             '<input type="hidden" name="gu_name" value='+result[0].address.region_2depth_name+'>'+
                             '<input type="hidden" name="lat" value='+latlng.getLat()+'>'+
                             '<input type="hidden" name="lng" value='+latlng.getLng()+'>'+
-                            '<input type ="button" onclick="add_button(); return false;" value="추가요청">'+
-                        '</form>';
+                            '<input style="float: left;"type ="button" onclick="add_button(); return false;" value="추가요청">'+
+                        '</form>'
+                        '</div>';
                         iwPosition = latlng; //인포윈도우 표시 위치입니다
                         iwRemoveable = true;
             
@@ -271,7 +288,7 @@
             });
 
             
-            //삭제, 추가요청 ajax를 비동기 통신
+            //추가요청 ajax를 비동기 통신
             function add_button(){
                 var queryString = $("#add_form").serialize();
                 
@@ -280,38 +297,21 @@
                     url: 'add',
                     data: queryString,
                     success: function (result) {
-                            alert("추가요청이 완료되었습니다.");
+                            alert("해당 위치에 쓰레기통 추가요청이 완료되었습니다.");
                         }
                 });
             };
+             //삭제요청 ajax를 비동기 통신
             function del_button(){
-                var queryString = $("#sub_form").serialize();
+                var queryString = $("#del_form").serialize();
                 
                 $.ajax({
                     type: 'POST',
                     url: 'invisible_wait',
                     data: queryString,
                     success: function (result) {
-                            alert("삭제요청이 완료되었습니다.");
+                            alert("해당 쓰레기통의 삭제요청이 완료되었습니다.");
                         }
-                });
-            };
-            function check_button(){
-                var queryString = $("#check_form").serialize();
-                
-                $.ajax({
-                    type: 'POST',
-                    url: '/admin_check',
-                    data: queryString,
-                    success: function (result) {
-                        if(result){
-                            location.replace('/admin/');
-                        }
-
-                        else{
-                            alert("잘못된 코드입니다!");
-                        }
-                    }
                 });
             };
         </script>

@@ -1,56 +1,82 @@
 <!DOCTYPE html>
 <html lang="ko">
     <head>
-        <title>Admin Page</title>
+        <title>Admin page</title>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+        
+        <!--Jquery CND-->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+
+        <!--부트스트랩-->
+        <!-- 합쳐지고 최소화된 최신 CSS -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+        <!-- 부가적인 테마 -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css">\
+
+        <link rel='stylesheet' href='/stylesheets/style.css' />
     </head>
 
     <body>
         <div class="container">
-            <a style="border: 1px solid gold; float: left; width: 22%;" href="/admin/list?category=0&cur=1">
-            표시X
-            </a>
-            <a style="border: 1px solid red; float: left; width: 22%;" href="/admin/list?category=1&cur=1">
-            표시O
-            </a>
-            <a style="border: 1px solid blue; float: left; width: 22%;" href="/admin/list?category=2&cur=1">
-            추가요청
-            </a>
-            <a style="border: 1px solid green; float: left; width: 22%;" href="/admin/list?category=3&cur=1">
-            삭제요청
-            </a>
+            <!--nav-->
+            <nav class="navbar navbar-default navbar-fixed-top">
+                <div class="container">
+                  <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                      <span class="sr-only">Toggle navigation</span>
+                      <span class="icon-bar"></span>
+                      <span class="icon-bar"></span>
+                      <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="/">SEOUL TRASH MAP</a>
+                  </div>
+                  <div id="navbar" class="collapse navbar-collapse">
+                    <ul class="nav navbar-nav">
+                    <!--페이징 구현하는데 이용한 페이지 : https://abc1211.tistory.com/533 -->
+                    <% if (paging.category==0) {
+                        %><li class="active"> <%
+                        }else{
+                        %><li><%
+                        }
+                        %>
+                    <a href="/admin/list?category=0&cur=1">표시x</a></li>
 
-            <div>
-                <form action="/admin/admin_out" method="post">
-                <input type="submit" value="로그아웃">
-                </form>
-            </div>
-            <div>
-                <% if (paging.category==0){
-                    %><a>표시X 목록</a>
-                    <%
-                    }
-                    else if(paging.category==1){
-                    %><a>표시O 목록</a>
-                    <%
-                    }
-                    else if(paging.category==2){
-                    %><a>추가요청 목록</a>
-                    <%
-                    } else if(paging.category==3){
-                    %><a>삭제요청 목록</a>
-                    <%
-                    }
-                    %> 
-            </div>
+                    <% if (paging.category==1) {
+                        %><li class="active"> <%
+                        }else{
+                        %><li><%
+                        }
+                        %>
+                    <a href="/admin/list?category=1&cur=1">표시o</a></li>
+                    
+                    <% if (paging.category==2) {
+                        %><li class="active"> <%
+                        }else{
+                        %><li><%
+                        }
+                        %>
+                    <a href="/admin/list?category=2&cur=1">추가요청</a></li>
+                    <% if (paging.category==3) {
+                        %><li class="active"> <%
+                        }else{
+                        %><li><%
+                        }
+                        %>
+                    <a href="/admin/list?category=3&cur=1">삭제요청</a></li>
+                    </ul>
+                    <ul class="nav navbar-nav navbar-right">
+                        <li>
+                          <a href="/admin/admin_out">로그아웃</a>
+                        </li>
+                    </ul>
+                  </div><!--/.nav-collapse -->
+                </div>
+              </nav><!--nav end-->
 
-            <table class="table talbe-striped">
+            <table class="table talbe-striped" >
                 <thead>
-                    <th>id</th>
+                    <th>날짜</th>
                     <th>행정구역</th>
                     <th>상세주소</th>
                     <% if (paging.category==3){
@@ -58,7 +84,7 @@
                     <%
                     }
                     %>
-                    <th>지도에서보기</th>
+                    <th>카카오맵</th>
                     <th>수정</th>  
                     <th>삭제</th>
                 </thead>
@@ -66,7 +92,7 @@
                     <% data.forEach(function (trashcan, index){ %>
                     <tr>
                         <td>
-                            <%= trashcan.id %>
+                            <%= trashcan.adit_time.toString().substring(0,10) %>
                         </td>
                         <td>
                             <%= trashcan.gu_name %>
@@ -75,16 +101,16 @@
                             <%= trashcan.trash_addr %>
                         </td>
                             <% if (paging.category==3){
-                            %><td>
+                            %><td style="text-overflow:ellipsis;max-width:200px;overflow:hidden;display:inline-block;white-space: nowrap;">
                                 <%= trashcan.reason %>
                             </td>
                             <% 
                            }   
                             %>
                         <td>
-                            <a href="https://map.kakao.com/link/map/Hello World!,<%= trashcan.trash_lat %>, <%= trashcan.trash_lng %>" style="color:blue" target="_blank">지도에서보기</a>
+                            <a href="https://map.kakao.com/link/map/카카오맵에서 위치 확인,<%= trashcan.trash_lat %>, <%= trashcan.trash_lng %>" style="color:blue" target="_blank">카카오맵</a>
                         </td>
-                        <td>
+                        <td style="width:120px;padding-right: 0px;padding-left: 0px;">
                             <% if (paging.category==0){
                                 %>
                                 <form action="/admin/visible" method="post">
@@ -107,7 +133,7 @@
                                 }
                                 else{
                                 %>
-                                    <form action="/admin/visible" method="post">
+                                    <form style="float: left ;margin-right:1px;"action="/admin/visible" method="post">
                                         <input type="hidden" name="id" value='<%= trashcan.id %>'>
                                         <input type="hidden" name="category" value='<%= paging.category %>'>
                                         <input type="hidden" name="curPage" value='<%= paging.curPage %>'>
@@ -140,8 +166,8 @@
        <br>
        <br>
 
-       <div class="container">
-           <ui class="pager">
+       <div class="text-center">
+           <ui class="pagination .bg-light" justify-content="center" >
         <%
         var category = paging.category
         var curSet = paging.curSet
@@ -153,19 +179,15 @@
         var page_size = paging.page_size
         var curPage = paging.curPage
         %>
-
         <%
             if(curSet >1){
                 %>
                 <li value=(startPage -1) class="previous">
                     <a href='/admin/list?category=<%= category %>&cur=<%= (startPage - 1) %>'>이전페이지</a>
                 </li>
-
                 <%
             }
                 %>
-
-
                 <%
             for(var i = startPage; i <=endPage; i++){
                 if(i >totalPage){
@@ -173,7 +195,7 @@
                 }
                 if(i == curPage){
                 %>
-                    <li value=<% i %> class='' >
+                    <li value=<% i %> background="black" class='active' >
                     <a href='/admin/list?category=<%= category %>&cur=<%= i %>'><%= i %></a>
                     </li>
 
@@ -181,18 +203,16 @@
                 }
                 else{
                     %>
-                    <li value=<%= i %> class='active' >
+                    <li value=<%= i %> class='' >
                         <a href='/admin/list?category=<%= category %>&cur=<%= i %>'><%= i %></a>
                     </li>
 
                     <%
                 }
                     %>
-
                 <%
             }
                 %>
-
                 <%
                 if(curSet <totalSet){
                 %>
@@ -204,5 +224,14 @@
             %>
            </ui>
        </div>
+        <!--footer-->
+       <footer class="footer" style="padding-left:15%; padding-right: 5%; ">
+        <div class="container" style="float: left; width:33%">
+            <p class="text-muted">2020-2 web/python termproject</p>
+        </div>
+        <div class="container" style="float: right; width:33%">
+            <p class="text-muted">Seoul_Trash_Map v1.0</p>
+        </div>
+        </footer>
     </body>
 </html>

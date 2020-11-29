@@ -2,7 +2,7 @@ var express = require('express');
 var mysql = require('../lib/db.js');
 var router = express.Router();
 
-/* GET admin listing. */
+// GET admin listing. 
 router.get('/', function(req, res, next) {
     res.redirect('/admin/list?category=0&cur=1');
 });
@@ -19,8 +19,9 @@ var auth = function (req, res, next) {
     res.status(500).send("The wrong approach.");
 };
 
-
-router.get("/list",auth, function(req,res,next){
+//페이징 부분 구현은 아래 페이지를 이용.
+//https://abc1211.tistory.com/533
+router.get("/list", auth, function(req,res,next){
   ///admin/list?category=int&cur=int
   //한 페이지에 게시물 수
   var page_size = 10;
@@ -61,7 +62,7 @@ router.get("/list",auth, function(req,res,next){
       no = (curPage-1) *10; //db에서 가져올 첫번째 게시물 번호
     }
 
-    var result2 = {
+    var paging_info = {
       "category": category,
       "curPage": curPage,
       "page_list_size": page_list_size,
@@ -74,47 +75,66 @@ router.get("/list",auth, function(req,res,next){
       };
       
     //나중에 db에 들어온 시간도 적어서 ORDER BY id해주자.
-    var sql = 'SELECT * FROM trash_addrs WHERE validity=? limit ?,?';
+    //처리완료.
+    var sql = 'SELECT * FROM trash_addrs WHERE validity=? ORDER BY adit_time DESC limit ?,?  ';
     mysql.query(sql, [category, no, page_size], function(err, result) {
       if(err){
         console.log(err);
         res.status(500).send("Internal Server Error");
       }
-
-      res.render('list',{data:result, paging:result2});
+      res.render('list',{data:result, paging:paging_info});
     })
   })
 })
 
+//관리자 페이지에서 '보이게' 눌렀을때 처리
+//지도에서 해당 마커가 출력되게 해준다.
 router.post('/visible', auth, function(req,res, next){
   id = req.body.id;
 
-  var sql = "UPDATE trash_addrs SET validity=?, adit_time=NOW() WHERE id = ?";
+  var sql = "UPDATE trash_addrs SET validity=?, adit_time=NOW() WHERE id = ? ";
 
   mysql.query(sql, [1, id], function(err, result) {
+    if(err){
+      console.log(err);
+      res.status(500).send("Internal Server Error");
+    }
     console.log("Record Updated!!");
     console.log(result);
   });
   res.redirect('/admin/list?category='+req.body.category+'&cur='+req.body.curPage);
 });
 
+//관리자 페이지에서 '안보이게' 를 눌렀을떄처리
+//db에서는 지우지않고 지도에서만 안보이게 해준다.
 router.post('/invisible',auth, function(req,res,next){
   id = req.body.id;
 
   var sql = "UPDATE trash_addrs SET validity=?, adit_time=NOW() WHERE id = ?";
 
   mysql.query(sql, [0, id], function(err, result) {
+    if(err){
+      console.log(err);
+      res.status(500).send("Internal Server Error");
+    }
     console.log("Record Updated!!");
     console.log(result);
+    
   });
   res.redirect('/admin/list?category='+req.body.category+'&cur='+req.body.curPage);
 });
 
+//관리자 페이지에서 '삭제' 를 눌렀을떄처리
+//db에서도 지우고 지도에서도 지운다. 
 router.post('/delete',auth, function(req,res,next){
   id = req.body.id;
 
   var sql = "DELETE FROM trash_addrs WHERE id = ?";
   mysql.query(sql, [id], function(err, result) {
+    if(err){
+      console.log(err);
+      res.status(500).send("Internal Server Error");
+    }
     console.log("Record Updated!!");
     console.log(result);
   });
@@ -122,15 +142,16 @@ router.post('/delete',auth, function(req,res,next){
 res.redirect('/admin/list?category='+req.body.category+'&cur='+req.body.curPage);
 });
 
-
-router.post('/admin_out', auth, function(req,res,next){
+//logout구현.
+//세션을 지우고 메인페이지로 이동한다. 
+router.get('/admin_out', auth, function(req,res,next){
   if(req.session.code != null)
 	{
 		req.session.destroy();
 		res.redirect('/');
 	}
 	else
-		res.send("Session is not present");
+  res.status(500).send("The wrong approach.");
 })
 
 module.exports = router;
