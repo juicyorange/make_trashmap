@@ -28,10 +28,13 @@ app.use(bodyParser.json());//json타입으로 파싱
 //정적인 파일을 서비스할 수 있게 해준다.
 app.use(express.static('public'));
 
-
+//지도 보여주는 부분
 app.use('/', indexRouter);
+
+//관리자 페이지 부분
 app.use('/admin', adminRouter);
 
+//코드입력시 이곳에서 코드가 맞는지 확인한다. 
 app.post('/admin_check', function(req, res){
 
   admin_code = "iaubewgivgreinvlkjrbwljvhb"; //그냥 따로 가입없이 코드로 진행.
