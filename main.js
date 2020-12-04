@@ -2,6 +2,8 @@ var path = require('path');
 var bodyParser = require('body-parser'); //req.body를 통해 요청을 받는다.
 var express = require('express') // express 모듈. npm install express를 통해 설치가능.
 var session = require('express-session'); // session를 위한 모듈
+
+//aws 호스팅을 위한 모듈 및 변수들.
 const fs = require('fs');
 const HTTPS = require('https');
 const domain = "www.seoultrashmap.ml" //도메인 주소.
@@ -81,3 +83,11 @@ try {
   console.log('[HTTPS] HTTPS 오류가 발생하였습니다. HTTPS 서버는 실행되지 않습니다.');
   console.log(error);
 }
+
+//로컬에서 localhost:포트번호 이렇게 서버를 열때. 
+/*
+서버가 비로소 여기에서 열린다. listen이 성공적으로 되면 function안에 있는 기능 수행.
+app.listen(3978, function() {
+  console.log('Example app listening on port 3978!')
+});
+*/
