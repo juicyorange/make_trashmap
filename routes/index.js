@@ -2,6 +2,7 @@ var express = require('express');
 var mysql = require('../lib/db.js');
 var router = express.Router();
 
+//카카오 Map api 키 입력.
 var appkey = "ec37ce7ff126878e77d2c814181f7794";
 
 // GET main page.
@@ -43,7 +44,7 @@ router.post('/invisible_wait', function(req,res, next){
 
     reason = req.body.reason;
     id = req.body.id;
-
+ 
     //validity : (0: 표시x, 1: 표시o, 2: 추가요청, 3: 삭제요청)
     //기존에 있던 정보들이기 때문에 일치하는 id를 찾아서 validity와 삭제이유만 추가해주면 된다.
     var sql = "UPDATE trash_addrs SET validity=?, reason=?, adit_time=NOW() WHERE id = ?";
