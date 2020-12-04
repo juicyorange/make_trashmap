@@ -1,23 +1,24 @@
 <!DOCTYPE html>
     <html>
       <head>
-          <meta charset="utf-8">
-          <title><%= title %></title>
+        <meta charset="utf-8">
+        <!--스마트폰 해상도에 맞춰준다.-->
+        <meta name ="viewport" content = "width=divice-width, initial-scale=1.0">
+        <title><%= title %></title>
         
         <!--부트스트랩-->
         <!-- 합쳐지고 최소화된 최신 CSS -->
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
         <!-- 부가적인 테마 -->
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css">
-
         <link rel='stylesheet' href='/stylesheets/style.css' />
 
-        <!--아래 스타일은 지도만을 위한 스타일들이다.-->
+        <!--아래 스타일은 지도만을 위한 스타일들이다. 그래서 따로 빼놓았다.-->
       <style>
           body, html{
               padding-top: 0px;
               width:100%;
-              height:100%;
+              height:93%;
           }
           textarea{
             float:left ;
@@ -28,16 +29,24 @@
           .title {font-weight:bold;display:block;}
           .hAddr {position:absolute;left:10px;top:10px;border-radius: 2px;background:#fff;background:rgba(255,255,255,0.8);z-index:1;padding:5px;}
           .app_title {position:absolute;left:44%;top:10px;border-radius: 2px;background:#fff;background:rgba(255, 255, 255, 0);z-index:1;padding:5px;}
-
           .input_code {position:absolute;right:10px;top:10px;border-radius: 2px;background:#fff;background:rgba(255,255,255,0.8);z-index:1;padding:5px;}
-          #centerAddr {display:block;margin-top:2px;font-weight: normal;}
           .bAddr {padding:3px;text-overflow: ellipsis;overflow: hidden;white-space: nowrap;}
+          .app_title a{ text-decoration:none; color:black; font-size:x-large;}
 
-          /*768이상은 pc로 여기고 인포윈도우를 다른것을 띄워준다.*/
-          @media screen and (min-width: 768px) { #mobile_click_info { display: none; } }
+          #centerAddr {display:block;margin-top:2px;font-size: medium; font-weight: normal;}
 
+          /*768이상은 pc로 여기고 그 이하는 모바일로 처리.*/
+          @media screen and (min-width: 768px) { 
+                #mobile_click_info { display: none; } 
+            }
+          @media screen and (max-width: 768px) { 
+                #centerAddr {display:block;margin-top:1px;font-size:small;}
+                .app_title {left:37%}
+                .app_title a{ text-decoration:none; color:black; font-size:medium;} 
+                body{height:99%}
+                ;
+            }
       </style>
-
       </head>
 
       <body>
@@ -47,7 +56,7 @@
                 <span class="title">지도 중심 주소</span>
                 <span id="centerAddr"></span>
             </div>
-            <div class="app_title"><a style="text-decoration:none; color:black; font-size:xx-large"  href="/login">Trash Map</a></div>
+            <div class="app_title"><a href="/login">Trash Map</a></div>
          </div>
 
          <!--footer-->
@@ -59,11 +68,12 @@
                 <p class="text-muted">Seoul_Trash_Map v1.0</p>
             </div>
         </footer>
-
+        <!--footer end-->
         <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=<%= appkey %>&libraries=services,clusterer,drawing"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 
         <!-- 지도를 출력해주기 위한 javscript -->
+        <!-- 카카오map api guide, sample 참조. https://apis.map.kakao.com/web/sample/ -->
         <script>
             var mapContainer = document.getElementById('map'), // 지도를 표시할 div
                 mapOption = {
@@ -295,7 +305,6 @@
                     }
                 });
             });
-
             
             //추가요청 ajax를 비동기 통신
             function add_button(){

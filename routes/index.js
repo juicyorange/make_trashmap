@@ -3,7 +3,7 @@ var mysql = require('../lib/db.js');
 var router = express.Router();
 
 //카카오 Map api 키 입력.
-var appkey = "ec37ce7ff126878e77d2c814181f7794";
+var appkey = "키 값을 입력해주세요.";
 
 // GET main page.
 router.get('/', function(req, res, next) {
@@ -22,6 +22,7 @@ router.get('/', function(req, res, next) {
     });
 });
 
+//사용자가 추가요청을 보냈을때.
 router.post('/add', function(req,res, next){
 
     trash_addr = req.body.addr;
@@ -36,10 +37,13 @@ router.post('/add', function(req,res, next){
             console.log(err);
             res.status(500).send("Internal Server Error");
         }
+        console.log("Record Updated!!");
+        console.log(result);
     })
     res.status(200).send("Success request");
 });
 
+//사용자가 삭제요청을 했을때. 
 router.post('/invisible_wait', function(req,res, next){
 
     reason = req.body.reason;
