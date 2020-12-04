@@ -11,7 +11,12 @@ rest_api_key = "66931185a093f52d46306e8486e8398c"
 
 # mysql ########################## 
 conn = pymysql.connect( 
-    host='localhost', 
+    
+    # 로컬 mysql에 넣을때
+    # host='localhost', 
+
+    # aws 가상 컴퓨터의 주소에 있는 mysql에 넣는다.
+    host='3.219.91.216', 
     user='root', 
     password='Kim@1468433', 
     db='trashmap', 
