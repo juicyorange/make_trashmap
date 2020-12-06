@@ -7,7 +7,7 @@ import pymysql.cursors #db연결
 
 # 카카오 developer에서 받은 REST API키를 입력하면 됩니다. 
 # 카카오map api에서 발급가능.
-rest_api_key = "66931185a093f52d46306e8486e8398c"
+rest_api_key = "키 값을 입력해주세요"
 
 # mysql ########################## 
 conn = pymysql.connect( 
@@ -16,9 +16,9 @@ conn = pymysql.connect(
     # host='localhost', 
 
     # aws 가상 컴퓨터의 주소에 있는 mysql에 넣는다.
-    host='3.219.91.216', 
+    host='사용할 db의 주소를 적어주세요', 
     user='root', 
-    password='Kim@1468433', 
+    password='비밀번호를 입력해주세요', 
     db='trashmap', 
     charset='utf8' 
     )
