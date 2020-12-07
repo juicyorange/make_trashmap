@@ -16,15 +16,15 @@ conn = pymysql.connect(
     # host='localhost', 
 
     # aws 가상 컴퓨터의 주소에 있는 mysql에 넣는다.
-    host='3.219.91.216', 
+    host='사용할 db의 주소를 적어주세요', 
     user='root', 
     password='비밀번호를 입력해주세요', 
     db='trashmap', 
     charset='utf8' 
     )
 
-# 해당 함수의 내용 전부
-# https://znznzn.tistory.com/53 참조.
+# 해당 함수의 내용 아래 페이지 참조.
+# https://znznzn.tistory.com/53
 def getGPS_coordinate_for_KAKAO(address, MYAPP_KEY):
     '''
     카카오 geodata 가져오기 
