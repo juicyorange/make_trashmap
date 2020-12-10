@@ -3,7 +3,7 @@ var mysql = require('../lib/db.js');
 var router = express.Router();
 
 //카카오 Map api 키 입력.
-var appkey = "ec37ce7ff126878e77d2c814181f7794";
+var appkey = "키입력";
 
 // GET main page.
 router.get('/', function(req, res, next) {
