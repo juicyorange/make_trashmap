@@ -7,7 +7,7 @@ import pymysql.cursors #db연결
 
 # 카카오 developer에서 받은 REST API키를 입력하면 됩니다. 
 # 카카오map api에서 발급가능.
-rest_api_key = "66931185a093f52d46306e8486e8398c"
+rest_api_key = "키입력"
 
 # mysql ########################## 
 conn = pymysql.connect( 
